@@ -1,0 +1,4 @@
+# runtime state written by the hooks
+STATUS
+*.coffeebreak.bak
+.DS_Store
