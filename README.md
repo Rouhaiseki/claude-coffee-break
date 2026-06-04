@@ -78,7 +78,7 @@ before shipping — no broken puzzles.
 ## Install
 
 ```bash
-git clone https://github.com/Langzishueth/claude-coffee-break.git
+git clone https://github.com/Rouhaiseki/claude-coffee-break.git
 cd claude-coffee-break
 ./install.sh
 ```
