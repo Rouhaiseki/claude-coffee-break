@@ -1,6 +1,6 @@
 ---
 name: coffee-break
-description: Play relaxing mini-games while Claude Code works on long tasks. A 9-game arcade (a 14-level Sokoban campaign, Flappy Bird, Timberman, 2048, memory, sliding puzzle, brain-teaser riddles, guess-the-number, reaction test) with an achievement system, in English / 中文 / 日本語. It auto-opens during long runs and closes itself when the AI finishes. Use when the user wants to take a break, play a game while waiting for a long task, or asks to open/install the Coffee Break arcade.
+description: Play relaxing mini-games while Claude Code works on long tasks. A 10-game arcade (a 14-level Sokoban campaign, a raise-'em-up Claude pet, Flappy Bird, Timberman, 2048, memory, sliding puzzle, brain-teaser riddles, guess-the-number, reaction test) with an achievement system, in English / 中文 / 日本語. It auto-opens during long runs and closes itself when the AI finishes. Use when the user wants to take a break, play a game while waiting for a long task, or asks to open/install the Coffee Break arcade.
 ---
 
 # Coffee Break

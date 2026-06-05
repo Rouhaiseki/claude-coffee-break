@@ -94,6 +94,17 @@
   .sk{width:34px;height:34px;display:flex;align-items:center;justify-content:center;font-size:21px}
   .sk-wall{background:#9c7b4d}.sk-floor{background:#f3ead7}.sk-target{background:#f3ead7;box-shadow:inset 0 0 0 3px #d9a441}
   .sk-boxok{background:#cdebd2!important}
+  /* pet */
+  #petStage{position:relative;height:160px;display:flex;align-items:center;justify-content:center;margin:2px 0}
+  #petMascot{animation:bob 2.6s ease-in-out infinite}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+  #petFx{position:absolute;inset:0;pointer-events:none}
+  .petfx{position:absolute;top:46%;font-size:26px;animation:rise 1s ease-out forwards}
+  @keyframes rise{0%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-54px)}}
+  .pbar{display:flex;align-items:center;gap:9px;margin:7px auto;width:min(300px,82vw);font-size:12px;color:var(--sub)}
+  .pbar .lab{width:50px;text-align:right}
+  .pbar .track{flex:1;height:10px;background:#efe7d6;border-radius:6px;overflow:hidden;display:block}
+  .pbar .fill{display:block;height:100%;border-radius:6px;transition:width .3s}
   /* achievements */
   .achlist{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px}
   .achcell{display:flex;gap:10px;align-items:center;text-align:left;padding:11px 12px;border-radius:14px;
@@ -135,6 +146,18 @@
         <button class="act primary" id="skNext" style="display:none"></button></div>
     </div>
   </div></div>
+
+  <div class="view" id="v-pet"><button class="back" data-back></button><div class="panel">
+    <div class="ghint" id="petHint"></div>
+    <div class="bar" style="margin:0 0 4px"><span id="petLevel"></span><span id="petMoodTxt"></span></div>
+    <div id="petStage"><div id="petMascot"></div><div id="petFx"></div></div>
+    <div id="petStats"></div>
+    <div class="row">
+      <button class="act ghost" data-pet="feed" id="petFeed"></button>
+      <button class="act ghost" data-pet="play" id="petPlay"></button>
+      <button class="act ghost" data-pet="sleep" id="petSleep"></button>
+      <button class="act ghost" data-pet="clean" id="petClean"></button>
+    </div></div></div>
 
   <div class="view" id="v-riddle"><button class="back" data-back></button><div class="panel">
     <div class="q" id="rq"></div><div class="ans" id="ra"></div>
@@ -210,6 +233,11 @@ const I18N={
     skHint:"把箱子📦推到金框上。只能推、不能拉，小心别推进死角。",
     skLevel:n=>`第 ${n} 关`,skUndo:"撤销",skReset:"重置",skNext:"下一关 ›",skWin:"过关！🎉",
     skAll:"14 关全部通关，你太强了！👑",pickLevel:"选关卡",lockTip:"先过上一关",
+    petHint:"喂它、陪它玩、哄睡、洗澡——把 Claude 宝宝养大。离开越久它越想你。",
+    petFeed:"🍪 喂食",petPlay:"🎈 陪玩",petSleep:"💤 睡觉",petClean:"🫧 洗澡",
+    petLevel:n=>`Lv.${n}`,petHunger:"饱腹",petHappy:"心情",petEnergy:"精力",
+    petTired:"太累了，先睡一觉吧",petLevelUp:n=>`升级啦！Lv.${n}`,
+    petMoodHappy:"心情超好",petMoodOk:"还不错",petMoodSad:"有点蔫",petMoodSleepy:"困了…",
     achTitle:"成就",achBtn:"⭐ 成就",achCount:(a,b)=>`已解锁 ${a} / ${b}`,achUnlock:"解锁成就",
     ovTitle:"AI 写完啦",ovDesc:"代码搞定，回去验收吧。窗口会自己关。",cd:n=>`${n} 秒后自动关闭…`,canClose:"可以关掉这个窗口了"},
   en:{statusWorking:"AI is coding…",statusDone:"AI is done!",homeTitle:"Take a Break",
@@ -228,6 +256,11 @@ const I18N={
     skHint:"Push every box 📦 onto a gold square. You can only push, never pull — avoid corners.",
     skLevel:n=>`Level ${n}`,skUndo:"Undo",skReset:"Reset",skNext:"Next ›",skWin:"Cleared!🎉",
     skAll:"All 14 levels cleared — you legend!👑",pickLevel:"Pick a level",lockTip:"Clear the previous level",
+    petHint:"Feed, play, nap, bathe — raise your Claude buddy. The longer you're away, the more it misses you.",
+    petFeed:"🍪 Feed",petPlay:"🎈 Play",petSleep:"💤 Sleep",petClean:"🫧 Bathe",
+    petLevel:n=>`Lv.${n}`,petHunger:"Full",petHappy:"Mood",petEnergy:"Energy",
+    petTired:"Too tired — let it nap first",petLevelUp:n=>`Level up! Lv.${n}`,
+    petMoodHappy:"Loving it",petMoodOk:"Doing fine",petMoodSad:"A bit down",petMoodSleepy:"Sleepy…",
     achTitle:"Achievements",achBtn:"⭐ Goals",achCount:(a,b)=>`Unlocked ${a} / ${b}`,achUnlock:"Unlocked",
     ovTitle:"AI is done!",ovDesc:"Code's ready — go check it out. This window closes itself.",cd:n=>`Closing in ${n}s…`,canClose:"You can close this window now"},
   ja:{statusWorking:"AI がコード作成中…",statusDone:"AI 完了！",homeTitle:"ひとやすみ",
@@ -246,12 +279,18 @@ const I18N={
     skHint:"箱📦を金色のマスへ押そう。押すだけ・引けない。角に注意。",
     skLevel:n=>`ステージ ${n}`,skUndo:"もどす",skReset:"リセット",skNext:"次へ ›",skWin:"クリア！🎉",
     skAll:"全14ステージ制覇！すごい！👑",pickLevel:"ステージ選択",lockTip:"前のステージをクリア",
+    petHint:"ごはん・あそぶ・ねんね・おふろで Claude を育てよう。離れるほど寂しがります。",
+    petFeed:"🍪 ごはん",petPlay:"🎈 あそぶ",petSleep:"💤 ねんね",petClean:"🫧 おふろ",
+    petLevel:n=>`Lv.${n}`,petHunger:"まんぷく",petHappy:"きぶん",petEnergy:"げんき",
+    petTired:"つかれた…まずはねんね",petLevelUp:n=>`レベルアップ！Lv.${n}`,
+    petMoodHappy:"ごきげん",petMoodOk:"まあまあ",petMoodSad:"しょんぼり",petMoodSleepy:"ねむい…",
     achTitle:"実績",achBtn:"⭐ 実績",achCount:(a,b)=>`解除 ${a} / ${b}`,achUnlock:"実績解除",
     ovTitle:"AI 完了！",ovDesc:"コードができました。確認しに行こう。この窓は自動で閉じます。",cd:n=>`${n} 秒後に自動で閉じます…`,canClose:"この窓を閉じてOK"}
 };
 
 const GAMES=[
   {id:"sokoban",ic:"📦",feat:true,zh:["推箱子 · 通关","14 关，越推越烧脑"],en:["Sokoban · Campaign","14 levels, brain-bending"],ja:["倉庫番 · 全14関","だんだん手ごわく"]},
+  {id:"pet",ic:"🧸",zh:["养成 · Claude宝宝","喂它陪它，养大它"],en:["Pet Claude","Feed it, raise it"],ja:["育成 · Claudeっち","お世話して育てよう"]},
   {id:"riddle",ic:"🧠",zh:["脑筋急转弯","转个弯就通了"],en:["Riddles","Lateral thinking"],ja:["なぞなぞ","ひらめき勝負"]},
   {id:"timber",ic:"🪓",zh:["伐木工","砍树躲树枝"],en:["Timber","Chop & dodge"],ja:["木こり","枝をよけて"]},
   {id:"flappy",ic:"🐤",zh:["小鸟飞","穿过管子"],en:["Flappy","Fly the gaps"],ja:["パタパタ鳥","すき間を抜けろ"]},
@@ -264,7 +303,7 @@ const GAMES=[
 
 const ACH=[
   {id:"first",ic:"🎮",cond:s=>played(s)>=1,zh:["初次摸鱼","玩了第一个游戏"],en:["First break","Played a game"],ja:["はじめの一歩","ゲームをプレイ"]},
-  {id:"explorer",ic:"🗺️",cond:s=>played(s)>=9,zh:["全都玩遍","9 个游戏全玩过"],en:["Explorer","Tried all 9 games"],ja:["全制覇","9つ全部プレイ"]},
+  {id:"explorer",ic:"🗺️",cond:s=>played(s)>=10,zh:["全都玩遍","10 个游戏全玩过"],en:["Explorer","Tried all 10 games"],ja:["全制覇","10個すべてプレイ"]},
   {id:"soko1",ic:"📦",cond:s=>sokoCleared(s)>=1,zh:["推箱子入门","通关第 1 关"],en:["First crate","Cleared level 1"],ja:["倉庫番入門","ステージ1クリア"]},
   {id:"soko5",ic:"🏗️",cond:s=>sokoCleared(s)>=5,zh:["搬运工","推箱子过 5 关"],en:["Mover","Sokoban 5 levels"],ja:["運び屋","倉庫番5ステージ"]},
   {id:"soko10",ic:"🚛",cond:s=>sokoCleared(s)>=10,zh:["老司机","推箱子过 10 关"],en:["Veteran","Sokoban 10 levels"],ja:["ベテラン","倉庫番10ステージ"]},
@@ -276,7 +315,9 @@ const ACH=[
   {id:"fast",ic:"⚡",cond:s=>s.reactBest&&s.reactBest<=250,zh:["手速之王","反应 ≤ 250 毫秒"],en:["Lightning","Reaction ≤250ms"],ja:["電光石火","反応≤250ms"]},
   {id:"sniper",ic:"🎯",cond:s=>s.guessBest&&s.guessBest<=5,zh:["神算子","5 次内猜中"],en:["Sniper","Guessed in ≤5"],ja:["名探偵","5回以内で的中"]},
   {id:"riddle10",ic:"💡",cond:s=>(s.riddlesSeen||0)>=10,zh:["脑筋达人","看了 10 个答案"],en:["Riddler","Saw 10 answers"],ja:["なぞなぞ通","答えを10回"]},
-  {id:"slide",ic:"🧩",cond:s=>(s.slideSolved||0)>=1,zh:["拼图高手","拼好一次滑块"],en:["Puzzler","Solved a slide"],ja:["パズル名人","スライド完成"]}
+  {id:"slide",ic:"🧩",cond:s=>(s.slideSolved||0)>=1,zh:["拼图高手","拼好一次滑块"],en:["Puzzler","Solved a slide"],ja:["パズル名人","スライド完成"]},
+  {id:"petcare",ic:"🍼",cond:s=>(s.pet&&s.pet.cared||0)>=1,zh:["铲屎官","照顾了一次宝宝"],en:["Caretaker","Cared for it once"],ja:["お世話係","1回お世話した"]},
+  {id:"petlv5",ic:"🧡",cond:s=>(s.pet&&s.pet.level||0)>=5,zh:["养成达人","宝宝养到 Lv.5"],en:["Devoted","Pet reached Lv.5"],ja:["育成の達人","Lv.5まで育てた"]}
 ];
 
 const RIDDLES={
@@ -441,6 +482,59 @@ document.addEventListener("keydown",e=>{if(current!=="sokoban"||skMode!=="play")
   bd.addEventListener("touchend",e=>{if(sx==null)return;const t=e.changedTouches[0];
     const dx=t.clientX-sx,dy=t.clientY-sy;if(Math.abs(dx)<20&&Math.abs(dy)<20)return;
     skMove(Math.abs(dx)>Math.abs(dy)?(dx>0?"right":"left"):(dy>0?"down":"up"));sx=sy=null;},{passive:true});})();
+
+/* ---------- 养成 Claude 宝宝 ---------- */
+const pclamp=v=>Math.max(0,Math.min(100,Math.round(v)));
+function petEnsure(){if(!stats.pet)stats.pet={hunger:80,happy:80,energy:80,level:1,xp:0,cared:0,lastSeen:Date.now()};}
+function petDecay(){petEnsure();const p=stats.pet;const now=Date.now();const m=Math.max(0,(now-(p.lastSeen||now))/60000);
+  if(m>0){p.hunger=pclamp(p.hunger-m*0.5);p.happy=pclamp(p.happy-m*0.4);p.energy=pclamp(p.energy-m*0.3);}
+  p.lastSeen=now;save();}
+let petTick=null;
+startGame.pet=()=>{petEnsure();petDecay();drawPet();clearInterval(petTick);
+  petTick=setInterval(()=>{if(current!=="pet"){clearInterval(petTick);return;}petDecay();drawPet();},5000);};
+refreshGame.pet=drawPet;
+function petMood(){const p=stats.pet;if(p.energy<15)return"sleepy";const a=(p.hunger+p.happy+p.energy)/3;
+  return a>70?"happy":a>40?"neutral":"sad";}
+function mascotSVG(mood){
+  let eyes,mouth,extra="";
+  if(mood==="sleepy"){
+    eyes='<path d="M43 56 q5 4 10 0" stroke="#5a3d33" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M67 56 q5 4 10 0" stroke="#5a3d33" stroke-width="3" fill="none" stroke-linecap="round"/>';
+    mouth='<ellipse cx="60" cy="70" rx="3" ry="4.5" fill="#5a3d33"/>';
+    extra='<text x="88" y="34" font-size="13" fill="#9c7b4d">z</text><text x="96" y="24" font-size="10" fill="#bda489">z</text>';
+  }else{
+    eyes='<circle cx="48" cy="56" r="5" fill="#5a3d33"/><circle cx="72" cy="56" r="5" fill="#5a3d33"/><circle cx="46.4" cy="54" r="1.6" fill="#fff"/><circle cx="70.4" cy="54" r="1.6" fill="#fff"/>';
+    mouth=mood==="happy"?'<path d="M50 67 q10 10 20 0" stroke="#5a3d33" stroke-width="3" fill="none" stroke-linecap="round"/>'
+      :mood==="sad"?'<path d="M50 73 q10 -9 20 0" stroke="#5a3d33" stroke-width="3" fill="none" stroke-linecap="round"/>'
+      :'<line x1="52" y1="70" x2="68" y2="70" stroke="#5a3d33" stroke-width="3" stroke-linecap="round"/>';
+  }
+  return '<svg width="150" height="150" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">'
+    +'<ellipse cx="38" cy="26" rx="11" ry="12" fill="#d98463"/><ellipse cx="82" cy="26" rx="11" ry="12" fill="#d98463"/>'
+    +'<ellipse cx="60" cy="64" rx="44" ry="44" fill="#d98463"/>'
+    +'<ellipse cx="60" cy="74" rx="30" ry="28" fill="#f3cbb1"/>'
+    +'<circle cx="40" cy="66" r="5.5" fill="#e98f86" opacity=".55"/><circle cx="80" cy="66" r="5.5" fill="#e98f86" opacity=".55"/>'
+    +'<g fill="#fff7ec"><path d="M60 84 l2.6 6 6 2.6 -6 2.6 -2.6 6 -2.6 -6 -6 -2.6 6 -2.6z"/></g>'
+    +eyes+mouth+extra+'</svg>';
+}
+function petBar(lab,val,color){return '<div class="pbar"><span class="lab">'+lab+'</span><span class="track"><span class="fill" style="width:'+val+'%;background:'+color+'"></span></span></div>';}
+function drawPet(){petEnsure();const p=stats.pet;const mood=petMood();
+  $("#petHint").textContent=T().petHint;$("#petLevel").textContent=T().petLevel(p.level);
+  $("#petMoodTxt").textContent={happy:T().petMoodHappy,neutral:T().petMoodOk,sad:T().petMoodSad,sleepy:T().petMoodSleepy}[mood];
+  $("#petMascot").innerHTML=mascotSVG(mood);
+  $("#petStats").innerHTML=petBar(T().petHunger,p.hunger,"#e8a04a")+petBar(T().petHappy,p.happy,"#5bb377")+petBar(T().petEnergy,p.energy,"#4a78b0");
+  $("#petFeed").textContent=T().petFeed;$("#petPlay").textContent=T().petPlay;$("#petSleep").textContent=T().petSleep;$("#petClean").textContent=T().petClean;}
+function petFloat(emoji){const fx=$("#petFx");if(!fx)return;const s=document.createElement("div");s.className="petfx";
+  s.textContent=emoji;s.style.left=(38+Math.random()*44)+"%";fx.appendChild(s);setTimeout(()=>s.remove(),1000);}
+function petGain(xp){const p=stats.pet;p.xp+=xp;let need=8+p.level*4;
+  while(p.xp>=need){p.xp-=need;p.level++;need=8+p.level*4;const msg=T().petLevelUp(p.level);
+    toastQueue.push({ic:"🎉",zh:[msg],en:[msg],ja:[msg]});drainToast();}}
+function petAction(a){petEnsure();const p=stats.pet;
+  if(a==="feed"){p.hunger=pclamp(p.hunger+26);p.happy=pclamp(p.happy+4);petFloat("🍪");petGain(3);}
+  else if(a==="play"){if(p.energy<10){$("#petMoodTxt").textContent=T().petTired;return;}
+    p.happy=pclamp(p.happy+22);p.energy=pclamp(p.energy-14);petFloat("🎈");petGain(4);}
+  else if(a==="sleep"){p.energy=pclamp(p.energy+34);p.hunger=pclamp(p.hunger-6);petFloat("💤");petGain(2);}
+  else if(a==="clean"){p.happy=pclamp(p.happy+14);petFloat("🫧");petGain(2);}
+  p.cared=(p.cared||0)+1;p.lastSeen=Date.now();save();checkAch();drawPet();}
+document.querySelectorAll("[data-pet]").forEach(b=>b.onclick=()=>petAction(b.dataset.pet));
 
 /* ---------- 脑筋急转弯 ---------- */
 let rIdx=0;
@@ -619,8 +713,9 @@ function route(){const h=location.hash.slice(1);
 
 /* 截图演示用：?demo 在内存里点亮部分进度，不写入存档 */
 if(location.search.indexOf("demo")>=0){
-  ["first","soko1","soko5","win2048","fast","mem","timber20","slide"].forEach(id=>stats.unlocked[id]=true);
+  ["first","soko1","soko5","win2048","fast","mem","timber20","slide","petcare"].forEach(id=>stats.unlocked[id]=true);
   [0,1,2,3,4,5].forEach(i=>stats.sokoban.cleared[i]=true);
+  stats.pet={hunger:88,happy:92,energy:80,level:3,xp:4,cared:9,lastSeen:Date.now()};
 }
 renderChrome();route();
 window.addEventListener("hashchange",route);

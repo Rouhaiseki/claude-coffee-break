@@ -31,7 +31,7 @@
 
 整个东西就是一个独立的 HTML 文件。**免构建、零依赖、不联网、不收集任何数据。**
 
-## 里面有 9 个游戏
+## 里面有 10 个游戏
 
 <table>
 <tr>
@@ -45,6 +45,23 @@
 <td width="50%" valign="top">
 
 <img src="screenshots/sokoban.png" width="280" alt="推箱子玩法" />
+
+</td>
+</tr>
+</table>
+
+<table>
+<tr>
+<td width="50%" valign="top">
+
+**🧸 养成 · Claude 宝宝**
+一只走 Claude 珊瑚橙配色的电子宠物。喂食、陪玩、哄睡、洗澡；饱腹/心情/精力会随
+真实时间衰减，你不来它就想你。照顾它就能升级、表情会变。
+
+</td>
+<td width="50%" valign="top">
+
+<img src="screenshots/pet.png" width="280" alt="养成 Claude 宝宝" />
 
 </td>
 </tr>

@@ -32,7 +32,7 @@ have to think about it:
 
 It's one self-contained HTML file. **No build, no dependencies, no network, no tracking.**
 
-## What's inside — 9 games
+## What's inside — 10 games
 
 <table>
 <tr>
@@ -47,6 +47,24 @@ before shipping — no broken puzzles.
 <td width="50%" valign="top">
 
 <img src="screenshots/sokoban.png" width="280" alt="Sokoban gameplay" />
+
+</td>
+</tr>
+</table>
+
+<table>
+<tr>
+<td width="50%" valign="top">
+
+**🧸 Pet Claude · Raise-'em-up**
+A Tamagotchi-style buddy in Claude's coral colours. Feed it, play, nap and
+bathe it — its hunger / mood / energy drain in real time, so it genuinely misses
+you between coding sessions. Care for it to level it up.
+
+</td>
+<td width="50%" valign="top">
+
+<img src="screenshots/pet.png" width="280" alt="Pet Claude raising game" />
 
 </td>
 </tr>
